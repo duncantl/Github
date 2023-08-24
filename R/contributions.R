@@ -2,10 +2,19 @@ contributions =
     # https://github.com/users/duncantl/contributions?from=2022-11-30&to=2022-12-30
 function(user, from = Sys.Date() - 365, to = Sys.Date())
 {
+    #
+    # Handle more than one year.
+    #  e.g., from  5/21 to now
+    #        from 2022 to now
+    #        from 2021 to 2021
+    #        from 2021 to 5/2022
+    #        from 5/2021 to 5/2022
+    #
     range = format(c(from, to), "%Y-%m-%d")
     html = getForm(sprintf("https://github.com/users/%s/contributions", user), from = range[1], to = range[2]) # , .opts = list(verbose = TRUE))
     doc = htmlParse(html)
     parseContributions(doc)
+    
 #    tb = readHTMLTable(doc, which = 1)
 }
 
