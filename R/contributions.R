@@ -31,11 +31,12 @@ function(user, from = Sys.Date() - 365, to = Sys.Date())
         to = as.Date(to, "%Y-%m-%d")        
     
     range = format(c(from, to), "%Y-%m-%d")
-    html = getForm(sprintf("https://github.com/users/%s/contributions", user), from = range[1], to = range[2], .opts = list(verbose = TRUE))
+    html = getForm(sprintf("https://github.com/users/%s/contributions", user), from = range[1], to = range[2])
+
     doc = htmlParse(html)
-    parseContributions(doc)
-    
-#    tb = readHTMLTable(doc, which = 1)
+    ans = parseContributions(doc)
+
+    ans[ ans$date <= to, ]
 }
 
 parseContributions =
