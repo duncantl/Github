@@ -1,5 +1,7 @@
+# This should use the git API, not system2 calls.
+
 gitLog =
-function(dir = ".", ...)    
+function(dir = ".", ..., .args = unlist(list(...)))
 {
     if(dir != ".") {
         cur = getwd()
@@ -7,10 +9,8 @@ function(dir = ".", ...)
         setwd(dir)
     }
 
-    args = unlist(list(...))
-    
     #    system("git log", intern = TRUE)
-    system2("git", args = c("log", args), stdout = TRUE)
+    system2("git", args = c("log", .args), stdout = TRUE)
 }
 
 gitLogDates =
@@ -46,7 +46,23 @@ function(x, y, ylab = "density", ...)
 
 
 gitChanges =
-function(log = gitLog(..., "--numstat", "--oneline"), ...)
+function(log = gitLog(..., .args = c("--numstat", "--oneline")), ...)
 {
+    w = grepl("\\t", log)
+    com = split(log, cumsum(!w))
+    ans = do.call(rbind, lapply(com, mkCommitDf))
+    names(ans) = c("additions", "deletions", "file", "hash")
+    ans
+}
+
+mkCommitDf =
+function(x)    
+{
+    if(length(x) == 1)
+        return(data.frame(additions = integer(), deletions = integer(), file = character(), hash = character()))
     
+    d = read.table( textConnection( x[-1] ) )
+    hash = gsub(" .*", "", x[1])
+    d$hash = hash
+    d
 }
