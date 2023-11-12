@@ -1,13 +1,16 @@
 gitLog =
-function(dir = ".")    
+function(dir = ".", ...)    
 {
     if(dir != ".") {
         cur = getwd()
         on.exit(setwd(cur))
         setwd(dir)
     }
+
+    args = unlist(list(...))
     
-    system("git log", intern = TRUE)
+    #    system("git log", intern = TRUE)
+    system2("git", args = c("log", args), stdout = TRUE)
 }
 
 gitLogDates =
@@ -40,3 +43,10 @@ function(x, y, ylab = "density", ...)
     plot(h, x$y, type = "l", ylab = ylab, ...)
 }
 
+
+
+gitChanges =
+function(log = gitLog(..., "--numstat", "--oneline"), ...)
+{
+    
+}
