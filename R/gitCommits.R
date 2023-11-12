@@ -63,7 +63,6 @@ function(x)
     if(length(x) == 1)
         return(data.frame(additions = integer(), deletions = integer(), file = character(), hash = character()))
     
-    #d = read.table( textConnection( x[-1] ) )
     d = as.data.frame(do.call(rbind, strsplit(x[-1], "\\t")))
     hash = gsub(" .*", "", x[1])
     d$hash = hash
