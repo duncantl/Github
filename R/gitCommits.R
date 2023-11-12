@@ -1,14 +1,26 @@
 gitLog =
-function()    
+function(dir = ".")    
 {
+    if(dir != ".") {
+        cur = getwd()
+        on.exit(setwd(cur))
+        setwd(dir)
+    }
+    
     system("git log", intern = TRUE)
 }
 
 gitLogDates =
-function(log = gitLog())
+function(log = gitLog(...), ...)
 {
     d = trimws(gsub("^Date:", "", grep("^Date:", log, value = TRUE)))
     as.POSIXct(strptime(d, "%a %b %d %H:%M:%S %Y")) # , tz = "PDT"
+}
+
+gitUser =
+function(log = gitLog(...), ...)
+{
+   trimws(gsub("^Author:", "", grep("^Author:", log, value = TRUE)))
 }
 
 density.POSIXct =
